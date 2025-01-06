@@ -4,8 +4,8 @@ func main() {
 	Hello("Golang")
 }
 
-const greetings = "Ola "
-const defaultGreeting = "Ola Mundo"
+const greetings = "Hello "
+const defaultGreeting = "Hello World"
 
 func Hello(name string) string {
 	if name == "" {
