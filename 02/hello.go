@@ -32,3 +32,17 @@ func Hello(name, language string) string {
 	}
 	return greetings[language] + name
 }
+
+func HelloUsingSwitch(name, language string) string {
+	message := defaultGreeting
+	switch language {
+	case "portuguese":
+		message = "Ola " + name
+	case "spanish":
+		message = "Ola " + name
+	case "english":
+		message = "Hello " + name
+	}
+
+	return message
+}
