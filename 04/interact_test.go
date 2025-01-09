@@ -7,7 +7,7 @@ func TestInteract(t *testing.T) {
 	expectation := "AAAAA"
 
 	if output != expectation {
-		t.Errorf("The output for the method Sum is '%s' and the expectation was '%s'", output, expectation)
+		t.Errorf("The output for the method interact is '%s' and the expectation was '%s'", output, expectation)
 	}
 }
 
