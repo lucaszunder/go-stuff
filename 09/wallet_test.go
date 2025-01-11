@@ -9,7 +9,7 @@ func TestWallet(t *testing.T) {
 	validateBalance := func(t *testing.T, output, expectation Bitcoin) {
 		t.Helper()
 		if output != expectation {
-			t.Errorf("resultado %s, esperado %s", output.String(), expectation.String())
+			t.Errorf("output %s, expected %s", output.String(), expectation.String())
 		}
 	}
 
