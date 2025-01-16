@@ -6,17 +6,18 @@ import (
 )
 
 func FastRequest(uriA, uriB string) (fastest string) {
-	startA := time.Now()
-	http.Get(uriA)
-	durationA := time.Since(startA)
-
-	startB := time.Now()
-	http.Get(uriB)
-	durationB := time.Since(startB)
+	durationA := MeasureTime(uriA)
+	durationB := MeasureTime(uriB)
 
 	if durationA < durationB {
 		return uriA
 	}
 
 	return uriB
+}
+
+func MeasureTime(uri string) time.Duration {
+	start := time.Now()
+	http.Get(uri)
+	return time.Since(start)
 }
