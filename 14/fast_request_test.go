@@ -8,15 +8,9 @@ import (
 )
 
 func TestFastRequest(t *testing.T) {
-	slowServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		time.Sleep(20 * time.Millisecond)
-		w.WriteHeader(http.StatusOK)
-	}))
+	slowServer := CreateFakeHttpServer(20 * time.Millisecond)
 
-	fastServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		time.Sleep(5 * time.Millisecond)
-		w.WriteHeader(http.StatusOK)
-	}))
+	fastServer := CreateFakeHttpServer(5 * time.Millisecond)
 
 	defer slowServer.Close()
 	defer fastServer.Close()
@@ -30,4 +24,11 @@ func TestFastRequest(t *testing.T) {
 	if output != expectation {
 		t.Errorf("resultado '%s', esperado '%s'", output, expectation)
 	}
+}
+
+func CreateFakeHttpServer(sleepTime time.Duration) *httptest.Server {
+	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		time.Sleep(sleepTime)
+		w.WriteHeader(http.StatusOK)
+	}))
 }
