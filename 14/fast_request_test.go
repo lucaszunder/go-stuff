@@ -8,22 +8,47 @@ import (
 )
 
 func TestFastRequest(t *testing.T) {
-	slowServer := CreateFakeHttpServer(20 * time.Millisecond)
+	t.Run("Should select the most performatic url", func(t *testing.T) {
+		slowServer := CreateFakeHttpServer(20 * time.Millisecond)
 
-	fastServer := CreateFakeHttpServer(5 * time.Millisecond)
+		fastServer := CreateFakeHttpServer(5 * time.Millisecond)
 
-	defer slowServer.Close()
-	defer fastServer.Close()
+		defer slowServer.Close()
+		defer fastServer.Close()
 
-	slowURI := slowServer.URL
-	fastURI := fastServer.URL
+		slowURI := slowServer.URL
+		fastURI := fastServer.URL
 
-	expectation := fastURI
-	output := FastRequest(slowURI, fastURI)
+		timeout := 10 * time.Second
 
-	if output != expectation {
-		t.Errorf("resultado '%s', esperado '%s'", output, expectation)
-	}
+		expectation := fastURI
+		output, _ := FastRequest(slowURI, fastURI, timeout)
+
+		if output != expectation {
+			t.Errorf("resultado '%s', esperado '%s'", output, expectation)
+		}
+	})
+
+	t.Run("Should raise one error if the process took more then 10 seconds", func(t *testing.T) {
+		slowServer := CreateFakeHttpServer(20 * time.Millisecond)
+
+		fastServer := CreateFakeHttpServer(11 * time.Millisecond)
+
+		defer slowServer.Close()
+		defer fastServer.Close()
+
+		slowURI := slowServer.URL
+		fastURI := fastServer.URL
+
+		timeout := 10 * time.Millisecond
+
+		_, err := FastRequest(slowURI, fastURI, timeout)
+
+		if err == nil {
+			t.Errorf("Was expected one error")
+		}
+	})
+
 }
 
 func CreateFakeHttpServer(sleepTime time.Duration) *httptest.Server {

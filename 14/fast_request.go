@@ -1,19 +1,30 @@
 package main
 
 import (
+	"errors"
 	"net/http"
 	"time"
 )
 
-func FastRequest(uriA, uriB string) (fastest string) {
-	durationA := MeasureTime(uriA)
-	durationB := MeasureTime(uriB)
-
-	if durationA < durationB {
-		return uriA
+func FastRequest(uriA, uriB string, timeout time.Duration) (string, error) {
+	select {
+	case <-Ping(uriA):
+		return uriA, nil
+	case <-Ping(uriB):
+		return uriB, nil
+	case <-time.After(timeout):
+		return "", errors.New("timeout")
 	}
+}
 
-	return uriB
+func Ping(uri string) chan bool {
+	response := make(chan bool)
+
+	go func(channel chan bool) {
+		http.Get(uri)
+		response <- true
+	}(response)
+	return response
 }
 
 func MeasureTime(uri string) time.Duration {
